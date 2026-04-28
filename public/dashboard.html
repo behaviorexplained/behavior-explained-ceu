@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Dashboard | Behavior Explained</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --red: #FC3526; --pink: #FAA1E4; --lime: #CEDD2E;
+      --teal: #1ACBA3; --cyan: #1BBFD6; --bg: #FCF1F2; --dark: #1a1a1a;
+    }
+    body { font-family: 'Nunito', sans-serif; background: var(--bg); }
+    nav {
+      background: white; padding: 16px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-size: 22px; font-weight: 900; color: var(--dark); text-decoration: none; }
+    .nav-logo span { color: var(--red); }
+    .nav-links { display: flex; gap: 12px; align-items: center; }
+    .nav-links a {
+      text-decoration: none; color: var(--dark); font-weight: 700;
+      padding: 8px 16px; border-radius: 50px; transition: all 0.2s;
+    }
+    .nav-links a:hover { background: var(--bg); }
+    .btn-nav { background: var(--red) !important; color: white !important; padding: 10px 24px !important; }
+
+    .dashboard { max-width: 1100px; margin: 0 auto; padding: 50px 40px; }
+
+    .welcome {
+      background: var(--dark); color: white; border-radius: 24px;
+      padding: 40px; margin-bottom: 40px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .welcome h1 { font-size: 32px; font-weight: 900; margin-bottom: 8px; }
+    .welcome p { color: #aaa; font-size: 16px; }
+    .welcome-stats { display: flex; gap: 32px; }
+    .welcome-stat { text-align: center; }
+    .welcome-stat-num { font-size: 36px; font-weight: 900; color: var(--lime); }
+    .welcome-stat-label { font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+
+    .section-title {
+      font-size: 24px; font-weight: 900; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .courses-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 50px; }
+
+    .course-card {
+      background: white; border-radius: 20px; padding: 28px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+    }
+    .course-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+    .course-card-title { font-size: 18px; font-weight: 800; flex: 1; padding-right: 12px; }
+    .badge {
+      padding: 4px 12px; border-radius: 50px; font-size: 12px;
+      font-weight: 800; white-space: nowrap;
+    }
+    .badge-complete { background: #e8fdf7; color: var(--teal); }
+    .badge-inprogress { background: #fffbe6; color: #b8860b; }
+    .course-card-meta { color: #888; font-size: 14px; margin-bottom: 20px; }
+    .course-actions { display: flex; gap: 10px; }
+    .btn-action {
+      padding: 10px 20px; border-radius: 50px; font-size: 14px;
+      font-weight: 800; cursor: pointer; font-family: 'Nunito', sans-serif;
+      border: none; transition: all 0.2s; text-decoration: none;
+      display: inline-block; text-align: center;
+    }
+    .btn-watch { background: var(--cyan); color: white; }
+    .btn-quiz { background: var(--red); color: white; }
+    .btn-cert { background: var(--lime); color: var(--dark); }
+    .btn-action:hover { opacity: 0.85; transform: translateY(-1px); }
+
+    .empty-state {
+      text-align: center; padding: 60px; color: #aaa;
+      background: white; border-radius: 20px; grid-column: 1/-1;
+    }
+    .empty-state h3 { font-size: 22px; margin-bottom: 8px; color: var(--dark); }
+    .empty-state a {
+      display: inline-block; margin-top: 20px;
+      background: var(--red); color: white; padding: 12px 28px;
+      border-radius: 50px; font-weight: 800; text-decoration: none;
+    }
+
+    /* QUIZ MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6); z-index: 1000;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-radius: 24px; padding: 40px;
+      max-width: 600px; width: 100%; max-height: 85vh;
+      overflow-y: auto; position: relative;
+    }
+    .modal h2 { font-size: 24px; font-weight: 900; margin-bottom: 24px; }
+    .question-block { margin-bottom: 28px; }
+    .question-text { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+    .option {
+      display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+      border: 2px solid #eee; border-radius: 12px; margin-bottom: 8px;
+      cursor: pointer; transition: all 0.2s; font-weight: 600;
+    }
+    .option:hover { border-color: var(--teal); background: #f0fdfb; }
+    .option input { accent-color: var(--teal); width: 18px; height: 18px; }
+    .btn-submit {
+      width: 100%; padding: 16px; background: var(--red); color: white;
+      border: none; border-radius: 50px; font-size: 18px; font-weight: 800;
+      cursor: pointer; font-family: 'Nunito', sans-serif; margin-top: 8px;
+    }
+    .close-modal {
+      position: absolute; top: 16px; right: 20px;
+      font-size: 24px; cursor: pointer; color: #aaa; background: none; border: none;
+    }
+
+    /* RESULT */
+    .result {
+      text-align: center; padding: 20px 0; display: none;
+    }
+    .result-score { font-size: 64px; font-weight: 900; }
+    .result-msg { font-size: 20px; font-weight: 700; margin: 12px 0; }
+    .result-sub { color: #666; margin-bottom: 24px; }
+    .btn-close-result {
+      padding: 14px 36px; border-radius: 50px; font-size: 16px;
+      font-weight: 800; cursor: pointer; font-family: 'Nunito', sans-serif;
+      border: none; background: var(--teal); color: white;
+    }
+
+    @media (max-width: 768px) {
+      .courses-grid { grid-template-columns: 1fr; }
+      .welcome { flex-direction: column; gap: 24px; }
+      .dashboard { padding: 30px 20px; }
+      nav { padding: 16px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="nav-logo">Behavior <span>Explained</span></a>
+    <div class="nav-links">
+      <a href="/courses">Browse CEUs</a>
+      <a href="#" onclick="logout()">Log Out</a>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <div class="welcome">
+      <div>
+        <h1 id="welcomeName">Welcome back! 👋</h1>
+        <p id="welcomeSub">Keep up the great work on your continuing education.</p>
+      </div>
+      <div class="welcome-stats">
+        <div class="welcome-stat">
+          <div class="welcome-stat-num" id="statEnrolled">0</div>
+          <div class="welcome-stat-label">Enrolled</div>
+        </div>
+        <div class="welcome-stat">
+          <div class="welcome-stat-num" id="statCompleted">0</div>
+          <div class="welcome-stat-label">Completed</div>
+        </div>
+        <div class="welcome-stat">
+          <div class="welcome-stat-num" id="statCredits">0</div>
+          <div class="welcome-stat-label">CEU Credits</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">📚 My Courses</div>
+    <div class="courses-grid" id="coursesGrid">
+      <div class="empty-state">
+        <h3>Loading your courses...</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Modal -->
+  <div class="modal-overlay" id="quizModal">
+    <div class="modal">
+      <button class="close-modal" onclick="closeQuiz()">✕</button>
+      <h2 id="quizTitle">Course Quiz</h2>
+      <div id="quizContent"></div>
+      <div class="result" id="quizResult">
+        <div class="result-score" id="resultScore"></div>
+        <div class="result-msg" id="resultMsg"></div>
+        <div class="result-sub" id="resultSub"></div>
+        <button class="btn-close-result" onclick="closeQuiz()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentQuizCourseId = null;
+
+    async function init() {
+      const me = await fetch('/api/me').then(r => r.json());
+      if (!me.loggedIn) { window.location.href = '/login'; return; }
+
+      document.getElementById('welcomeName').textContent = `Welcome back, ${me.name.split(' ')[0]}! 👋`;
+      document.getElementById('welcomeSub').textContent =
+        me.license_type ? `${me.license_type} — keep up the great work!` : 'Keep up the great work on your continuing education.';
+
+      const courses = await fetch('/api/my-courses').then(r => r.json());
+
+      document.getElementById('statEnrolled').textContent = courses.length;
+      document.getElementById('statCompleted').textContent = courses.filter(c => c.completed).length;
+      document.getElementById('statCredits').textContent =
+        courses.filter(c => c.completed).reduce((sum, c) => sum + parseFloat(c.ceu_credits), 0).toFixed(1);
+
+      renderCourses(courses);
+    }
+
+    function renderCourses(courses) {
+      const grid = document.getElementById('coursesGrid');
+      if (!courses.length) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <h3>No courses yet</h3>
+            <p>Browse our library and enroll in your first CEU course.</p>
+            <a href="/courses">Browse Courses</a>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = courses.map(c => `
+        <div class="course-card">
+          <div class="course-card-header">
+            <div class="course-card-title">${c.title}</div>
+            <span class="badge ${c.completed ? 'badge-complete' : 'badge-inprogress'}">
+              ${c.completed ? '✓ Complete' : 'In Progress'}
+            </span>
+          </div>
+          <div class="course-card-meta">${c.ceu_credits} CEU Credits · ${c.category || 'General'}</div>
+          <div class="course-actions">
+            ${c.video_url ? `<a href="${c.video_url}" target="_blank" class="btn-action btn-watch">▶ Watch</a>` : ''}
+            ${!c.quiz_passed ? `<button class="btn-action btn-quiz" onclick="openQuiz(${c.course_id}, '${c.title.replace(/'/g, "\\'")}')">Take Quiz</button>` : ''}
+            ${c.completed ? `<button class="btn-action btn-cert" onclick="getCertificate(${c.course_id})">🏆 Certificate</button>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function openQuiz(courseId, title) {
+      currentQuizCourseId = courseId;
+      document.getElementById('quizTitle').textContent = `Quiz: ${title}`;
+      document.getElementById('quizResult').style.display = 'none';
+
+      const questions = await fetch(`/api/quiz/${courseId}`).then(r => r.json());
+
+      if (!questions.length) {
+        document.getElementById('quizContent').innerHTML = '<p style="color:#888;text-align:center;padding:20px">No quiz available for this course yet.</p>';
+      } else {
+        document.getElementById('quizContent').innerHTML = `
+          ${questions.map((q, i) => `
+            <div class="question-block">
+              <div class="question-text">${i + 1}. ${q.question}</div>
+              ${['a','b','c','d'].filter(opt => q[`option_${opt}`]).map(opt => `
+                <label class="option">
+                  <input type="radio" name="q${q.id}" value="${opt.toUpperCase()}">
+                  ${q[`option_${opt}`]}
+                </label>
+              `).join('')}
+            </div>
+          `).join('')}
+          <button class="btn-submit" onclick="submitQuiz(${JSON.stringify(questions.map(q => q.id))})">Submit Quiz</button>
+        `;
+      }
+
+      document.getElementById('quizModal').classList.add('open');
+    }
+
+    async function submitQuiz(questionIds) {
+      const answers = {};
+      questionIds.forEach(id => {
+        const selected = document.querySelector(`input[name="q${id}"]:checked`);
+        if (selected) answers[id] = selected.value;
+      });
+
+      const res = await fetch(`/api/quiz/${currentQuizCourseId}/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers })
+      });
+      const data = await res.json();
+
+      document.getElementById('quizContent').style.display = 'none';
+      const result = document.getElementById('quizResult');
+      result.style.display = 'block';
+      document.getElementById('resultScore').textContent = `${data.score}%`;
+      document.getElementById('resultScore').style.color = data.passed ? 'var(--teal)' : 'var(--red)';
+
+      if (data.passed) {
+        document.getElementById('resultMsg').textContent = '🎉 You passed!';
+        document.getElementById('resultSub').textContent = `You got ${data.correct} of ${data.total} correct. Your certificate will be emailed to you shortly!`;
+      } else {
+        document.getElementById('resultMsg').textContent = '😔 Not quite — try again!';
+        document.getElementById('resultSub').textContent = `You got ${data.correct} of ${data.total} correct. You need 80% to pass. Review the material and try again.`;
+      }
+    }
+
+    async function getCertificate(courseId) {
+      alert('Certificate feature coming soon! For now, contact hello@behaviorexplained.com to receive your certificate.');
+    }
+
+    function closeQuiz() {
+      document.getElementById('quizModal').classList.remove('open');
+      document.getElementById('quizContent').style.display = 'block';
+      currentQuizCourseId = null;
+      init();
+    }
+
+    function logout() {
+      fetch('/api/logout', { method: 'POST' }).then(() => window.location.href = '/');
+    }
+
+    init();
+  </script>
+</body>
+</html>
