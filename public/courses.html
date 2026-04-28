@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CEU Courses | Behavior Explained</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --red: #FC3526; --pink: #FAA1E4; --lime: #CEDD2E;
+      --teal: #1ACBA3; --cyan: #1BBFD6; --bg: #FCF1F2; --dark: #1a1a1a;
+    }
+    body { font-family: 'Nunito', sans-serif; background: var(--bg); }
+    nav {
+      background: white; padding: 16px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-size: 22px; font-weight: 900; color: var(--dark); text-decoration: none; }
+    .nav-logo span { color: var(--red); }
+    .nav-links { display: flex; gap: 12px; align-items: center; }
+    .nav-links a {
+      text-decoration: none; color: var(--dark); font-weight: 700;
+      padding: 8px 16px; border-radius: 50px; transition: all 0.2s;
+    }
+    .nav-links a:hover { background: var(--bg); }
+    .btn-nav { background: var(--red) !important; color: white !important; padding: 10px 24px !important; }
+
+    .page-header {
+      background: var(--dark); color: white;
+      padding: 60px 40px; text-align: center;
+    }
+    .page-header h1 { font-size: 42px; font-weight: 900; margin-bottom: 12px; }
+    .page-header p { font-size: 18px; color: #aaa; }
+
+    .courses-container { max-width: 1100px; margin: 0 auto; padding: 60px 40px; }
+
+    .filters {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px;
+    }
+    .filter-btn {
+      padding: 10px 24px; border-radius: 50px; border: 2px solid #ddd;
+      background: white; font-family: 'Nunito', sans-serif; font-weight: 700;
+      font-size: 14px; cursor: pointer; transition: all 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--dark); color: white; border-color: var(--dark);
+    }
+
+    .courses-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+    }
+
+    .course-card {
+      background: white; border-radius: 20px; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07); transition: transform 0.2s;
+      display: flex; flex-direction: column;
+    }
+    .course-card:hover { transform: translateY(-4px); }
+
+    .course-thumb {
+      height: 160px; display: flex; align-items: center; justify-content: center;
+      font-size: 48px; position: relative;
+    }
+    .course-credits {
+      position: absolute; top: 12px; right: 12px;
+      background: var(--dark); color: white;
+      padding: 4px 12px; border-radius: 50px;
+      font-size: 12px; font-weight: 800;
+    }
+
+    .course-body { padding: 24px; flex: 1; display: flex; flex-direction: column; }
+    .course-category {
+      font-size: 12px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--teal); margin-bottom: 8px;
+    }
+    .course-title { font-size: 18px; font-weight: 800; margin-bottom: 10px; line-height: 1.3; }
+    .course-desc { font-size: 14px; color: #666; line-height: 1.6; flex: 1; margin-bottom: 20px; }
+
+    .course-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid #f0f0f0; padding-top: 16px;
+    }
+    .course-price { font-size: 22px; font-weight: 900; color: var(--dark); }
+    .btn-enroll {
+      background: var(--red); color: white; border: none;
+      padding: 10px 20px; border-radius: 50px; font-size: 14px;
+      font-weight: 800; cursor: pointer; font-family: 'Nunito', sans-serif;
+      transition: opacity 0.2s; text-decoration: none;
+    }
+    .btn-enroll:hover { opacity: 0.9; }
+    .btn-enrolled {
+      background: var(--teal); color: white; border: none;
+      padding: 10px 20px; border-radius: 50px; font-size: 14px;
+      font-weight: 800; font-family: 'Nunito', sans-serif;
+    }
+
+    .empty {
+      text-align: center; padding: 80px 40px; color: #aaa;
+      grid-column: 1/-1;
+    }
+    .empty h3 { font-size: 24px; margin-bottom: 8px; }
+
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-radius: 24px; padding: 40px;
+      max-width: 500px; width: 90%; position: relative;
+    }
+    .modal h2 { font-size: 24px; font-weight: 900; margin-bottom: 8px; }
+    .modal p { color: #666; margin-bottom: 24px; }
+    .modal-actions { display: flex; gap: 12px; }
+    .btn-confirm {
+      flex: 1; padding: 14px; background: var(--red); color: white;
+      border: none; border-radius: 50px; font-size: 16px; font-weight: 800;
+      cursor: pointer; font-family: 'Nunito', sans-serif;
+    }
+    .btn-cancel {
+      flex: 1; padding: 14px; background: #f5f5f5; color: var(--dark);
+      border: none; border-radius: 50px; font-size: 16px; font-weight: 800;
+      cursor: pointer; font-family: 'Nunito', sans-serif;
+    }
+    .close-modal {
+      position: absolute; top: 16px; right: 20px;
+      font-size: 24px; cursor: pointer; color: #aaa; background: none; border: none;
+    }
+
+    @media (max-width: 768px) {
+      .courses-grid { grid-template-columns: 1fr; }
+      nav { padding: 16px 20px; }
+      .courses-container { padding: 40px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="nav-logo">Behavior <span>Explained</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="/courses">Browse CEUs</a>
+      <a href="/login">Log In</a>
+      <a href="/signup" class="btn-nav">Get Started</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1>CEU Course Library</h1>
+    <p>Earn your continuing education credits — on your schedule</p>
+  </div>
+
+  <div class="courses-container">
+    <div class="filters" id="filters">
+      <button class="filter-btn active" onclick="filterCourses('all', this)">All Courses</button>
+    </div>
+    <div class="courses-grid" id="coursesGrid">
+      <div class="empty"><h3>Loading courses...</h3></div>
+    </div>
+  </div>
+
+  <!-- Purchase Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <button class="close-modal" onclick="closeModal()">✕</button>
+      <h2 id="modalTitle">Enroll in Course</h2>
+      <p id="modalDesc">You'll get instant access to this course after enrolling.</p>
+      <div class="modal-actions">
+        <button class="btn-confirm" onclick="confirmEnroll()">Enroll Now — <span id="modalPrice"></span></button>
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let selectedCourseId = null;
+    let enrolledCourseIds = [];
+    const colors = ['#FCF1F2', '#e8fdf7', '#f0fcfe', '#fdf5ff', '#fffbe6', '#fff0f0'];
+    const emojis = ['🧠', '💬', '❤️', '🌱', '⚡', '🎯', '🔍', '💡', '🤝', '✨'];
+
+    async function init() {
+      const me = await fetch('/api/me').then(r => r.json());
+      currentUser = me;
+
+      if (me.loggedIn) {
+        document.getElementById('navLinks').innerHTML = `
+          <a href="/courses">Browse CEUs</a>
+          <a href="/dashboard">My Dashboard</a>
+          ${me.isAdmin ? '<a href="/admin">Admin</a>' : ''}
+          <a href="#" onclick="logout()">Log Out</a>
+        `;
+        const myCourses = await fetch('/api/my-courses').then(r => r.json());
+        enrolledCourseIds = myCourses.map(c => c.course_id);
+      }
+
+      const courses = await fetch('/api/courses').then(r => r.json());
+      renderCourses(courses);
+      buildFilters(courses);
+    }
+
+    function buildFilters(courses) {
+      const categories = [...new Set(courses.map(c => c.category).filter(Boolean))];
+      const filters = document.getElementById('filters');
+      categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.textContent = cat;
+        btn.onclick = () => filterCourses(cat, btn);
+        filters.appendChild(btn);
+      });
+    }
+
+    function filterCourses(cat, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      fetch('/api/courses').then(r => r.json()).then(courses => {
+        const filtered = cat === 'all' ? courses : courses.filter(c => c.category === cat);
+        renderCourses(filtered);
+      });
+    }
+
+    function renderCourses(courses) {
+      const grid = document.getElementById('coursesGrid');
+      if (!courses.length) {
+        grid.innerHTML = '<div class="empty"><h3>No courses yet</h3><p>Check back soon!</p></div>';
+        return;
+      }
+      grid.innerHTML = courses.map((c, i) => {
+        const enrolled = enrolledCourseIds.includes(c.id);
+        return `
+          <div class="course-card">
+            <div class="course-thumb" style="background:${colors[i % colors.length]}">
+              <span>${emojis[i % emojis.length]}</span>
+              <span class="course-credits">${c.ceu_credits} CEU</span>
+            </div>
+            <div class="course-body">
+              <div class="course-category">${c.category || 'General'}</div>
+              <div class="course-title">${c.title}</div>
+              <div class="course-desc">${c.description || ''}</div>
+              <div class="course-footer">
+                <div class="course-price">$${parseFloat(c.price).toFixed(2)}</div>
+                ${enrolled
+                  ? `<a href="/dashboard" class="btn-enrolled">✓ Enrolled</a>`
+                  : `<button class="btn-enroll" onclick="openModal(${c.id}, '${c.title.replace(/'/g, "\\'")}', ${c.price})">Enroll</button>`
+                }
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openModal(id, title, price) {
+      if (!currentUser?.loggedIn) {
+        window.location.href = '/signup';
+        return;
+      }
+      selectedCourseId = id;
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalPrice').textContent = `$${parseFloat(price).toFixed(2)}`;
+      document.getElementById('modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+      selectedCourseId = null;
+    }
+
+    async function confirmEnroll() {
+      const res = await fetch(`/api/enroll/${selectedCourseId}`, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        closeModal();
+        window.location.href = '/dashboard';
+      }
+    }
+
+    function logout() {
+      fetch('/api/logout', { method: 'POST' }).then(() => window.location.href = '/');
+    }
+
+    init();
+  </script>
+</body>
+</html>
