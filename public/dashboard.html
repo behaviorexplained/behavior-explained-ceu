@@ -4,28 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Dashboard | Behavior Explained</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --red: #FC3526; --pink: #FAA1E4; --lime: #CEDD2E;
       --teal: #1ACBA3; --cyan: #1BBFD6; --bg: #FCF1F2; --dark: #1a1a1a;
     }
-    body { font-family: 'Nunito', sans-serif; background: var(--bg); }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); }
+    h1, h2, h3, h4 { font-family: 'League Spartan', sans-serif; }
     nav {
       background: white; padding: 16px 40px;
       display: flex; justify-content: space-between; align-items: center;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100;
     }
-    .nav-logo { font-size: 22px; font-weight: 900; color: var(--dark); text-decoration: none; }
-    .nav-logo span { color: var(--red); }
+    .nav-logo { text-decoration: none; display: flex; align-items: center; }
     .nav-links { display: flex; gap: 12px; align-items: center; }
     .nav-links a {
-      text-decoration: none; color: var(--dark); font-weight: 700;
+      text-decoration: none; color: var(--dark); font-weight: 600;
       padding: 8px 16px; border-radius: 50px; transition: all 0.2s;
     }
     .nav-links a:hover { background: var(--bg); }
-    .btn-nav { background: var(--red) !important; color: white !important; padding: 10px 24px !important; }
 
     .dashboard { max-width: 1100px; margin: 0 auto; padding: 50px 40px; }
 
@@ -35,16 +34,13 @@
       display: flex; justify-content: space-between; align-items: center;
     }
     .welcome h1 { font-size: 32px; font-weight: 900; margin-bottom: 8px; }
-    .welcome p { color: #aaa; font-size: 16px; }
+    .welcome p { color: #aaa; font-size: 15px; font-family: 'Poppins', sans-serif; }
     .welcome-stats { display: flex; gap: 32px; }
     .welcome-stat { text-align: center; }
-    .welcome-stat-num { font-size: 36px; font-weight: 900; color: var(--lime); }
-    .welcome-stat-label { font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+    .welcome-stat-num { font-size: 36px; font-weight: 900; color: var(--lime); font-family: 'League Spartan', sans-serif; }
+    .welcome-stat-label { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; font-family: 'Poppins', sans-serif; }
 
-    .section-title {
-      font-size: 24px; font-weight: 900; margin-bottom: 24px;
-      display: flex; align-items: center; gap: 10px;
-    }
+    .section-title { font-size: 24px; font-weight: 900; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
 
     .courses-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 50px; }
 
@@ -53,18 +49,15 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.07);
     }
     .course-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-    .course-card-title { font-size: 18px; font-weight: 800; flex: 1; padding-right: 12px; }
-    .badge {
-      padding: 4px 12px; border-radius: 50px; font-size: 12px;
-      font-weight: 800; white-space: nowrap;
-    }
+    .course-card-title { font-size: 18px; font-weight: 800; flex: 1; padding-right: 12px; font-family: 'League Spartan', sans-serif; }
+    .badge { padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; white-space: nowrap; font-family: 'Poppins', sans-serif; }
     .badge-complete { background: #e8fdf7; color: var(--teal); }
     .badge-inprogress { background: #fffbe6; color: #b8860b; }
-    .course-card-meta { color: #888; font-size: 14px; margin-bottom: 20px; }
+    .course-card-meta { color: #888; font-size: 13px; margin-bottom: 20px; }
     .course-actions { display: flex; gap: 10px; }
     .btn-action {
-      padding: 10px 20px; border-radius: 50px; font-size: 14px;
-      font-weight: 800; cursor: pointer; font-family: 'Nunito', sans-serif;
+      padding: 10px 20px; border-radius: 50px; font-size: 13px;
+      font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif;
       border: none; transition: all 0.2s; text-decoration: none;
       display: inline-block; text-align: center;
     }
@@ -81,10 +74,10 @@
     .empty-state a {
       display: inline-block; margin-top: 20px;
       background: var(--red); color: white; padding: 12px 28px;
-      border-radius: 50px; font-weight: 800; text-decoration: none;
+      border-radius: 50px; font-weight: 600; text-decoration: none;
+      font-family: 'Poppins', sans-serif;
     }
 
-    /* QUIZ MODAL */
     .modal-overlay {
       display: none; position: fixed; inset: 0;
       background: rgba(0,0,0,0.6); z-index: 1000;
@@ -98,34 +91,31 @@
     }
     .modal h2 { font-size: 24px; font-weight: 900; margin-bottom: 24px; }
     .question-block { margin-bottom: 28px; }
-    .question-text { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+    .question-text { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
     .option {
       display: flex; align-items: center; gap: 12px; padding: 12px 16px;
       border: 2px solid #eee; border-radius: 12px; margin-bottom: 8px;
-      cursor: pointer; transition: all 0.2s; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; font-weight: 500; font-size: 14px;
     }
     .option:hover { border-color: var(--teal); background: #f0fdfb; }
     .option input { accent-color: var(--teal); width: 18px; height: 18px; }
     .btn-submit {
       width: 100%; padding: 16px; background: var(--red); color: white;
-      border: none; border-radius: 50px; font-size: 18px; font-weight: 800;
-      cursor: pointer; font-family: 'Nunito', sans-serif; margin-top: 8px;
+      border: none; border-radius: 50px; font-size: 16px; font-weight: 700;
+      cursor: pointer; font-family: 'Poppins', sans-serif; margin-top: 8px;
     }
     .close-modal {
       position: absolute; top: 16px; right: 20px;
       font-size: 24px; cursor: pointer; color: #aaa; background: none; border: none;
     }
 
-    /* RESULT */
-    .result {
-      text-align: center; padding: 20px 0; display: none;
-    }
-    .result-score { font-size: 64px; font-weight: 900; }
-    .result-msg { font-size: 20px; font-weight: 700; margin: 12px 0; }
-    .result-sub { color: #666; margin-bottom: 24px; }
+    .result { text-align: center; padding: 20px 0; display: none; }
+    .result-score { font-size: 64px; font-weight: 900; font-family: 'League Spartan', sans-serif; }
+    .result-msg { font-size: 20px; font-weight: 700; margin: 12px 0; font-family: 'League Spartan', sans-serif; }
+    .result-sub { color: #666; margin-bottom: 24px; font-size: 15px; }
     .btn-close-result {
-      padding: 14px 36px; border-radius: 50px; font-size: 16px;
-      font-weight: 800; cursor: pointer; font-family: 'Nunito', sans-serif;
+      padding: 14px 36px; border-radius: 50px; font-size: 15px;
+      font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif;
       border: none; background: var(--teal); color: white;
     }
 
@@ -141,8 +131,8 @@
 
   <nav>
     <a href="/" class="nav-logo">
-  <img src="/Submark_1.png" alt="Behavior Explained" style="height:200px; width:auto;">
-</a>
+      <img src="/Submark_1.png" alt="Behavior Explained" style="height:80px; width:auto;">
+    </a>
     <div class="nav-links">
       <a href="/courses">Browse CEUs</a>
       <a href="#" onclick="logout()">Log Out</a>
@@ -173,13 +163,10 @@
 
     <div class="section-title">📚 My Courses</div>
     <div class="courses-grid" id="coursesGrid">
-      <div class="empty-state">
-        <h3>Loading your courses...</h3>
-      </div>
+      <div class="empty-state"><h3>Loading your courses...</h3></div>
     </div>
   </div>
 
-  <!-- Quiz Modal -->
   <div class="modal-overlay" id="quizModal">
     <div class="modal">
       <button class="close-modal" onclick="closeQuiz()">✕</button>
@@ -226,7 +213,6 @@
           </div>`;
         return;
       }
-
       grid.innerHTML = courses.map(c => `
         <div class="course-card">
           <div class="course-card-header">
@@ -249,6 +235,7 @@
       currentQuizCourseId = courseId;
       document.getElementById('quizTitle').textContent = `Quiz: ${title}`;
       document.getElementById('quizResult').style.display = 'none';
+      document.getElementById('quizContent').style.display = 'block';
 
       const questions = await fetch(`/api/quiz/${courseId}`).then(r => r.json());
 
@@ -270,7 +257,6 @@
           <button class="btn-submit" onclick="submitQuiz(${JSON.stringify(questions.map(q => q.id))})">Submit Quiz</button>
         `;
       }
-
       document.getElementById('quizModal').classList.add('open');
     }
 
@@ -304,12 +290,11 @@
     }
 
     async function getCertificate(courseId) {
-      alert('Certificate feature coming soon! For now, contact hello@behaviorexplained.com to receive your certificate.');
+      alert('Certificate feature coming soon! For now, contact arogers@behaviorexplained.com to receive your certificate.');
     }
 
     function closeQuiz() {
       document.getElementById('quizModal').classList.remove('open');
-      document.getElementById('quizContent').style.display = 'block';
       currentQuizCourseId = null;
       init();
     }
