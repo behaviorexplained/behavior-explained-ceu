@@ -3,356 +3,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Behavior Explained | CEU Courses</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     :root {
-      --red: #FC3526;
-      --pink: #FAA1E4;
-      --lime: #CEDD2E;
-      --teal: #1ACBA3;
-      --cyan: #1BBFD6;
-      --bg: #FCF1F2;
-      --dark: #1a1a1a;
-      --white: #ffffff;
+      --red: #FC3526; --pink: #FAA1E4; --lime: #CEDD2E;
+      --teal: #1ACBA3; --cyan: #1BBFD6; --bg: #FCF1F2; --dark: #1a1a1a;
     }
+    body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--dark); }
 
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: var(--bg);
-      color: var(--dark);
-    }
-
-    /* NAV */
     nav {
-      background: var(--white);
-      padding: 16px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      background: white; padding: 16px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100;
     }
-
-    .nav-logo {
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--dark);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .nav-logo span { color: var(--red); }
-
+    .nav-logo { text-decoration: none; display: flex; align-items: center; }
     .nav-links { display: flex; gap: 12px; align-items: center; }
-
     .nav-links a {
-      text-decoration: none;
-      color: var(--dark);
-      font-weight: 700;
-      padding: 8px 16px;
-      border-radius: 50px;
-      transition: all 0.2s;
+      text-decoration: none; color: var(--dark); font-weight: 700;
+      padding: 8px 16px; border-radius: 50px; transition: all 0.2s;
     }
-
     .nav-links a:hover { background: var(--bg); }
+    .btn-nav { background: var(--red) !important; color: white !important; padding: 10px 24px !important; }
 
-    .btn-nav {
-      background: var(--red) !important;
-      color: var(--white) !important;
-      padding: 10px 24px !important;
+    .hero {
+      padding: 80px 40px; max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
     }
-
-    .btn-nav:hover { opacity: 0.9; background: var(--red) !important; }
-
-    /* HERO */
-.hero {
-  padding: 80px 40px;
-  max-width: 1100px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: center;
-  min-height: 500px;
-}
-
-    .hero h1 {
-      font-size: 52px;
-      font-weight: 900;
-      line-height: 1.1;
-      margin-bottom: 20px;
-    }
-
-    .hero h1 .highlight-red { color: var(--red); }
-    .hero h1 .highlight-teal { color: var(--teal); }
-    .hero h1 .highlight-lime { color: var(--lime); }
-
-    .hero p {
-      font-size: 18px;
-      line-height: 1.7;
-      color: #555;
-      margin-bottom: 32px;
-    }
+    .hero h1 { font-size: 52px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; }
+    .highlight-red { color: var(--red); }
+    .highlight-teal { color: var(--teal); }
+    .highlight-lime { color: var(--lime); }
+    .hero p { font-size: 18px; line-height: 1.7; color: #555; margin-bottom: 32px; }
 
     .btn-primary {
-      background: var(--red);
-      color: white;
-      padding: 16px 36px;
-      border-radius: 50px;
-      font-size: 18px;
-      font-weight: 800;
-      text-decoration: none;
-      display: inline-block;
+      background: var(--red); color: white; padding: 16px 36px;
+      border-radius: 50px; font-size: 18px; font-weight: 800;
+      text-decoration: none; display: inline-block;
       transition: transform 0.2s, box-shadow 0.2s;
       box-shadow: 0 4px 15px rgba(252,53,38,0.3);
     }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(252,53,38,0.4);
-    }
-
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(252,53,38,0.4); }
     .btn-secondary {
-      background: transparent;
-      color: var(--dark);
-      padding: 16px 36px;
-      border-radius: 50px;
-      font-size: 18px;
-      font-weight: 800;
-      text-decoration: none;
-      display: inline-block;
-      border: 3px solid var(--dark);
-      margin-left: 16px;
-      transition: all 0.2s;
+      background: transparent; color: var(--dark); padding: 16px 36px;
+      border-radius: 50px; font-size: 18px; font-weight: 800;
+      text-decoration: none; display: inline-block;
+      border: 3px solid var(--dark); margin-left: 16px; transition: all 0.2s;
     }
+    .btn-secondary:hover { background: var(--dark); color: white; }
 
-    .btn-secondary:hover {
-      background: var(--dark);
-      color: white;
-    }
-
-.hero-image {
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
-  min-width: 300px;
-}
-
+    .hero-image { display: flex; justify-content: center; align-items: center; }
     .hero-badge {
-      width: 380px;
-      height: 380px;
-      background: var(--white);
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-      position: relative;
-      overflow: hidden;
+      width: 380px; height: 380px; border-radius: 50%;
+      overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
     }
+    .hero-badge img { width: 100%; height: 100%; object-fit: cover; }
 
-    .hero-badge::before {
-      content: '';
-      position: absolute;
-      top: -30px; right: -30px;
-      width: 150px; height: 150px;
-      background: var(--lime);
-      border-radius: 50%;
-      opacity: 0.3;
-    }
-
-    .hero-badge::after {
-      content: '';
-      position: absolute;
-      bottom: -20px; left: -20px;
-      width: 100px; height: 100px;
-      background: var(--pink);
-      border-radius: 50%;
-      opacity: 0.4;
-    }
-
-    .hero-badge-text {
-      font-size: 64px;
-      font-weight: 900;
-      color: var(--red);
-    }
-
-    .hero-badge-sub {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--dark);
-      text-align: center;
-      padding: 0 40px;
-    }
-
-    /* STATS */
     .stats {
-      background: var(--dark);
-      padding: 40px;
-      display: flex;
-      justify-content: center;
-      gap: 80px;
+      background: var(--dark); padding: 40px;
+      display: flex; justify-content: center; gap: 80px;
     }
-
     .stat { text-align: center; }
+    .stat-number { font-size: 40px; font-weight: 900; color: var(--lime); }
+    .stat-label { font-size: 14px; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
 
-    .stat-number {
-      font-size: 40px;
-      font-weight: 900;
-      color: var(--lime);
-    }
-
-    .stat-label {
-      font-size: 14px;
-      color: #aaa;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    /* FEATURES */
-    .features {
-      padding: 80px 40px;
-      max-width: 1100px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .section-title {
-      font-size: 38px;
-      font-weight: 900;
-      margin-bottom: 12px;
-    }
-
-    .section-sub {
-      font-size: 18px;
-      color: #666;
-      margin-bottom: 50px;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 30px;
-    }
-
+    .features { padding: 80px 40px; max-width: 1100px; margin: 0 auto; text-align: center; }
+    .section-title { font-size: 38px; font-weight: 900; margin-bottom: 12px; }
+    .section-sub { font-size: 18px; color: #666; margin-bottom: 50px; }
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
     .feature-card {
-      background: var(--white);
-      border-radius: 20px;
-      padding: 36px 28px;
-      text-align: left;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-      transition: transform 0.2s;
+      background: white; border-radius: 20px; padding: 36px 28px; text-align: left;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: transform 0.2s;
     }
-
     .feature-card:hover { transform: translateY(-4px); }
-
-    .feature-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      margin-bottom: 20px;
-    }
-
-    .feature-card h3 {
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 10px;
-    }
-
+    .feature-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; }
+    .feature-card h3 { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
     .feature-card p { color: #666; line-height: 1.6; }
 
-    /* HOW IT WORKS */
-    .how {
-      background: var(--white);
-      padding: 80px 40px;
-      text-align: center;
-    }
-
-    .steps {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      max-width: 900px;
-      margin: 50px auto 0;
-    }
-
-    .step {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-    }
-
+    .how { background: white; padding: 80px 40px; text-align: center; }
+    .steps { display: flex; justify-content: center; gap: 40px; max-width: 900px; margin: 50px auto 0; }
+    .step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 16px; }
     .step-number {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      font-size: 24px;
-      font-weight: 900;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 60px; height: 60px; border-radius: 50%; font-size: 24px; font-weight: 900;
+      color: white; display: flex; align-items: center; justify-content: center;
     }
-
     .step h3 { font-size: 18px; font-weight: 800; }
     .step p { color: #666; font-size: 15px; line-height: 1.6; }
 
-    /* CTA */
-    .cta {
-      background: linear-gradient(135deg, var(--teal), var(--cyan));
-      padding: 80px 40px;
-      text-align: center;
-      color: white;
-    }
-
+    .cta { background: linear-gradient(135deg, var(--teal), var(--cyan)); padding: 80px 40px; text-align: center; color: white; }
     .cta h2 { font-size: 40px; font-weight: 900; margin-bottom: 16px; }
     .cta p { font-size: 18px; opacity: 0.9; margin-bottom: 36px; }
-
     .btn-white {
-      background: white;
-      color: var(--teal);
-      padding: 16px 40px;
-      border-radius: 50px;
-      font-size: 18px;
-      font-weight: 800;
-      text-decoration: none;
-      display: inline-block;
-      transition: transform 0.2s;
+      background: white; color: var(--teal); padding: 16px 40px;
+      border-radius: 50px; font-size: 18px; font-weight: 800;
+      text-decoration: none; display: inline-block; transition: transform 0.2s;
       box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
-
     .btn-white:hover { transform: translateY(-2px); }
 
-    /* FOOTER */
-    footer {
-      background: var(--dark);
-      color: #aaa;
-      text-align: center;
-      padding: 30px;
-      font-size: 14px;
-    }
-
+    footer { background: var(--dark); color: #aaa; text-align: center; padding: 30px; font-size: 14px; }
     footer a { color: var(--pink); text-decoration: none; }
 
     @media (max-width: 768px) {
       .hero { grid-template-columns: 1fr; padding: 40px 20px; }
       .hero h1 { font-size: 36px; }
-      .hero-image { display: none; }
+      .hero-image { order: -1; }
+      .hero-badge { width: 260px; height: 260px; }
       .features-grid { grid-template-columns: 1fr; }
       .steps { flex-direction: column; }
       .stats { gap: 40px; flex-wrap: wrap; }
@@ -363,9 +121,9 @@
 <body>
 
   <nav>
-   <a href="/" class="nav-logo">
-  <img src="/Submark_1.png" alt="Behavior Explained" style="height:200px; width:auto;">
-</a>
+    <a href="/" class="nav-logo">
+      <img src="/Submark_1.png" alt="Behavior Explained" style="height:80px; width:auto;">
+    </a>
     <div class="nav-links" id="navLinks">
       <a href="/courses">Browse CEUs</a>
       <a href="/login">Log In</a>
@@ -376,7 +134,7 @@
   <section class="hero">
     <div class="hero-content">
       <h1>
-        CEUs built for 
+        CEUs built for
         <span class="highlight-red">Clinical</span>
         <span class="highlight-teal">Behavior</span>
         <span class="highlight-lime">Analysis.</span>
@@ -384,30 +142,19 @@
       <p>Earn your BACB approved continuing education credits online — at your own pace. Watch, learn, quiz, and get your certificate automatically. No waiting, no paperwork.</p>
       <a href="/courses" class="btn-primary">Browse Courses</a>
       <a href="/signup" class="btn-secondary">Sign Up Free</a>
+    </div>
     <div class="hero-image">
-        <div class="hero-badge" style="padding:0; overflow:hidden;">
-          <img src="/photo.jpg" alt="Behavior Explained" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
-        </div>
+      <div class="hero-badge">
+        <img src="/photo.jpg" alt="Behavior Explained">
       </div>
+    </div>
   </section>
 
   <div class="stats">
-    <div class="stat">
-      <div class="stat-number">10+</div>
-      <div class="stat-label">CEU Courses</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">100%</div>
-      <div class="stat-label">Online & On-Demand</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">Auto</div>
-      <div class="stat-label">Certificate Delivery</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">24/7</div>
-      <div class="stat-label">Access</div>
-    </div>
+    <div class="stat"><div class="stat-number">10+</div><div class="stat-label">CEU Courses</div></div>
+    <div class="stat"><div class="stat-number">100%</div><div class="stat-label">Online & On-Demand</div></div>
+    <div class="stat"><div class="stat-number">Auto</div><div class="stat-label">Certificate Delivery</div></div>
+    <div class="stat"><div class="stat-number">24/7</div><div class="stat-label">Access</div></div>
   </div>
 
   <section class="features">
@@ -441,8 +188,8 @@
       </div>
       <div class="feature-card">
         <div class="feature-icon" style="background:#fff0f0;">🧠</div>
-        <h3>Relevant Content</h3>
-        <p>Courses created for real clinical practice — not just checkbox compliance.</p>
+        <h3>Built for BCBAs</h3>
+        <p>Courses created specifically for Clinical Behavior Analysis — not generic content.</p>
       </div>
     </div>
   </section>
@@ -462,7 +209,7 @@
         <p>Access your course instantly and watch at your own pace.</p>
       </div>
       <div class="step">
-        <div class="step-number" style="background:var(--lime); color: var(--dark);">3</div>
+        <div class="step-number" style="background:var(--lime); color:var(--dark);">3</div>
         <h3>Pass the Quiz</h3>
         <p>Score 80% or higher on the post-course knowledge check.</p>
       </div>
@@ -481,22 +228,20 @@
   </section>
 
   <footer>
-    <p>© 2026 Behavior Explained. All rights reserved. | <a href="mailto:hello@behaviorexplained.com">hello@behaviorexplained.com</a></p>
+    <p>© 2026 Behavior Explained. All rights reserved. | <a href="mailto:arogers@behaviorexplained.com">arogers@behaviorexplained.com</a></p>
   </footer>
 
   <script>
-    // Update nav if logged in
     fetch('/api/me').then(r => r.json()).then(user => {
       if (user.loggedIn) {
         document.getElementById('navLinks').innerHTML = `
           <a href="/courses">Browse CEUs</a>
           <a href="/dashboard">My Dashboard</a>
           ${user.isAdmin ? '<a href="/admin">Admin</a>' : ''}
-          <a href="#" onclick="logout()" class="btn-nav">Log Out</a>
+          <a href="#" onclick="logout()">Log Out</a>
         `;
       }
     });
-
     function logout() {
       fetch('/api/logout', { method: 'POST' }).then(() => location.reload());
     }
