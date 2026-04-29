@@ -4,25 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CEU Courses | Behavior Explained</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --red: #FC3526; --pink: #FAA1E4; --lime: #CEDD2E;
       --teal: #1ACBA3; --cyan: #1BBFD6; --bg: #FCF1F2; --dark: #1a1a1a;
     }
-    body { font-family: 'Nunito', sans-serif; background: var(--bg); }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); }
+    h1, h2, h3, h4 { font-family: 'League Spartan', sans-serif; }
     nav {
       background: white; padding: 16px 40px;
       display: flex; justify-content: space-between; align-items: center;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100;
     }
-    .nav-logo { font-size: 22px; font-weight: 900; color: var(--dark); text-decoration: none; }
-    .nav-logo span { color: var(--red); }
+    .nav-logo { text-decoration: none; display: flex; align-items: center; }
     .nav-links { display: flex; gap: 12px; align-items: center; }
     .nav-links a {
-      text-decoration: none; color: var(--dark); font-weight: 700;
+      text-decoration: none; color: var(--dark); font-weight: 600;
       padding: 8px 16px; border-radius: 50px; transition: all 0.2s;
+      font-family: 'Poppins', sans-serif;
     }
     .nav-links a:hover { background: var(--bg); }
     .btn-nav { background: var(--red) !important; color: white !important; padding: 10px 24px !important; }
@@ -32,25 +33,21 @@
       padding: 60px 40px; text-align: center;
     }
     .page-header h1 { font-size: 42px; font-weight: 900; margin-bottom: 12px; }
-    .page-header p { font-size: 18px; color: #aaa; }
+    .page-header p { font-size: 17px; color: #aaa; }
 
     .courses-container { max-width: 1100px; margin: 0 auto; padding: 60px 40px; }
 
-    .filters {
-      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px;
-    }
+    .filters { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px; }
     .filter-btn {
       padding: 10px 24px; border-radius: 50px; border: 2px solid #ddd;
-      background: white; font-family: 'Nunito', sans-serif; font-weight: 700;
+      background: white; font-family: 'Poppins', sans-serif; font-weight: 600;
       font-size: 14px; cursor: pointer; transition: all 0.2s;
     }
     .filter-btn.active, .filter-btn:hover {
       background: var(--dark); color: white; border-color: var(--dark);
     }
 
-    .courses-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
-    }
+    .courses-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
 
     .course-card {
       background: white; border-radius: 20px; overflow: hidden;
@@ -67,39 +64,36 @@
       position: absolute; top: 12px; right: 12px;
       background: var(--dark); color: white;
       padding: 4px 12px; border-radius: 50px;
-      font-size: 12px; font-weight: 800;
+      font-size: 12px; font-weight: 700; font-family: 'Poppins', sans-serif;
     }
 
     .course-body { padding: 24px; flex: 1; display: flex; flex-direction: column; }
     .course-category {
-      font-size: 12px; font-weight: 800; text-transform: uppercase;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
       letter-spacing: 1px; color: var(--teal); margin-bottom: 8px;
     }
-    .course-title { font-size: 18px; font-weight: 800; margin-bottom: 10px; line-height: 1.3; }
+    .course-title { font-size: 18px; font-weight: 800; margin-bottom: 10px; line-height: 1.3; font-family: 'League Spartan', sans-serif; }
     .course-desc { font-size: 14px; color: #666; line-height: 1.6; flex: 1; margin-bottom: 20px; }
 
     .course-footer {
       display: flex; justify-content: space-between; align-items: center;
       border-top: 1px solid #f0f0f0; padding-top: 16px;
     }
-    .course-price { font-size: 22px; font-weight: 900; color: var(--dark); }
+    .course-price { font-size: 22px; font-weight: 900; color: var(--dark); font-family: 'League Spartan', sans-serif; }
     .btn-enroll {
       background: var(--red); color: white; border: none;
       padding: 10px 20px; border-radius: 50px; font-size: 14px;
-      font-weight: 800; cursor: pointer; font-family: 'Nunito', sans-serif;
+      font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif;
       transition: opacity 0.2s; text-decoration: none;
     }
     .btn-enroll:hover { opacity: 0.9; }
     .btn-enrolled {
       background: var(--teal); color: white; border: none;
       padding: 10px 20px; border-radius: 50px; font-size: 14px;
-      font-weight: 800; font-family: 'Nunito', sans-serif;
+      font-weight: 600; font-family: 'Poppins', sans-serif;
     }
 
-    .empty {
-      text-align: center; padding: 80px 40px; color: #aaa;
-      grid-column: 1/-1;
-    }
+    .empty { text-align: center; padding: 80px 40px; color: #aaa; grid-column: 1/-1; }
     .empty h3 { font-size: 24px; margin-bottom: 8px; }
 
     .modal-overlay {
@@ -113,17 +107,17 @@
       max-width: 500px; width: 90%; position: relative;
     }
     .modal h2 { font-size: 24px; font-weight: 900; margin-bottom: 8px; }
-    .modal p { color: #666; margin-bottom: 24px; }
+    .modal p { color: #666; margin-bottom: 24px; font-size: 15px; }
     .modal-actions { display: flex; gap: 12px; }
     .btn-confirm {
       flex: 1; padding: 14px; background: var(--red); color: white;
-      border: none; border-radius: 50px; font-size: 16px; font-weight: 800;
-      cursor: pointer; font-family: 'Nunito', sans-serif;
+      border: none; border-radius: 50px; font-size: 15px; font-weight: 700;
+      cursor: pointer; font-family: 'Poppins', sans-serif;
     }
     .btn-cancel {
       flex: 1; padding: 14px; background: #f5f5f5; color: var(--dark);
-      border: none; border-radius: 50px; font-size: 16px; font-weight: 800;
-      cursor: pointer; font-family: 'Nunito', sans-serif;
+      border: none; border-radius: 50px; font-size: 15px; font-weight: 600;
+      cursor: pointer; font-family: 'Poppins', sans-serif;
     }
     .close-modal {
       position: absolute; top: 16px; right: 20px;
@@ -141,8 +135,8 @@
 
   <nav>
     <a href="/" class="nav-logo">
-  <img src="/Submark_1.png" alt="Behavior Explained" style="height:200px; width:auto;">
-</a>
+      <img src="/Submark_1.png" alt="Behavior Explained" style="height:80px; width:auto;">
+    </a>
     <div class="nav-links" id="navLinks">
       <a href="/courses">Browse CEUs</a>
       <a href="/login">Log In</a>
@@ -164,7 +158,6 @@
     </div>
   </div>
 
-  <!-- Purchase Modal -->
   <div class="modal-overlay" id="modal">
     <div class="modal">
       <button class="close-modal" onclick="closeModal()">✕</button>
@@ -187,7 +180,6 @@
     async function init() {
       const me = await fetch('/api/me').then(r => r.json());
       currentUser = me;
-
       if (me.loggedIn) {
         document.getElementById('navLinks').innerHTML = `
           <a href="/courses">Browse CEUs</a>
@@ -198,7 +190,6 @@
         const myCourses = await fetch('/api/my-courses').then(r => r.json());
         enrolledCourseIds = myCourses.map(c => c.course_id);
       }
-
       const courses = await fetch('/api/courses').then(r => r.json());
       renderCourses(courses);
       buildFilters(courses);
@@ -257,10 +248,7 @@
     }
 
     function openModal(id, title, price) {
-      if (!currentUser?.loggedIn) {
-        window.location.href = '/signup';
-        return;
-      }
+      if (!currentUser?.loggedIn) { window.location.href = '/signup'; return; }
       selectedCourseId = id;
       document.getElementById('modalTitle').textContent = title;
       document.getElementById('modalPrice').textContent = `$${parseFloat(price).toFixed(2)}`;
@@ -275,10 +263,7 @@
     async function confirmEnroll() {
       const res = await fetch(`/api/enroll/${selectedCourseId}`, { method: 'POST' });
       const data = await res.json();
-      if (data.success) {
-        closeModal();
-        window.location.href = '/dashboard';
-      }
+      if (data.success) { closeModal(); window.location.href = '/dashboard'; }
     }
 
     function logout() {
