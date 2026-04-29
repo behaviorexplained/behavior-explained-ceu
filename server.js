@@ -102,6 +102,9 @@ app.use(session({
   cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
 }));
 
+// Admin email
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'arogers@behaviorexplained.com';
+
 // Auth middleware
 const requireAuth = (req, res, next) => {
   if (!req.session.userId) return res.redirect('/login');
@@ -109,7 +112,9 @@ const requireAuth = (req, res, next) => {
 };
 
 const requireAdmin = (req, res, next) => {
-  if (!req.session.userId) return res.redirect('/');
+  if (!req.session.userId) return res.redirect('/login');
+  const user = db.prepare('SELECT email FROM users WHERE id = ?').get(req.session.userId);
+  if (!user || user.email !== ADMIN_EMAIL) return res.redirect('/');
   next();
 };
 
@@ -145,7 +150,7 @@ app.post('/api/login', (req, res) => {
   }
   req.session.userId = user.id;
   req.session.userName = user.name;
-  req.session.isAdmin = email === (process.env.ADMIN_EMAIL || 'arogers@behaviorexplained.com');
+  req.session.isAdmin = user.email === ADMIN_EMAIL;
   res.json({ success: true, isAdmin: req.session.isAdmin });
 });
 
@@ -157,7 +162,9 @@ app.post('/api/logout', (req, res) => {
 app.get('/api/me', (req, res) => {
   if (!req.session.userId) return res.json({ loggedIn: false });
   const user = db.prepare('SELECT id, name, email, license_number, license_type, bacb_number FROM users WHERE id = ?').get(req.session.userId);
-  res.json({ loggedIn: true, ...user, isAdmin: req.session.isAdmin });
+  const isAdmin = user.email === ADMIN_EMAIL;
+  req.session.isAdmin = isAdmin;
+  res.json({ loggedIn: true, ...user, isAdmin });
 });
 
 // COURSE ROUTES
