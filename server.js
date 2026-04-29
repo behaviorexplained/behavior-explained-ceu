@@ -220,4 +220,5 @@ app.get('/api/admin/enrollments', requireAdmin, (req, res) => {
 
 // START
 const PORT = process.env.PORT || 3000;
+app.use(express.static('public', { etag: false, maxAge: 0 }));
 app.listen(PORT, () => console.log(`Behavior Explained running on port ${PORT}`));
