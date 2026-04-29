@@ -5,14 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Behavior Explained | CEU Courses</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --red: #FC3526; --pink: #FAA1E4; --lime: #CEDD2E;
       --teal: #1ACBA3; --cyan: #1BBFD6; --bg: #FCF1F2; --dark: #1a1a1a;
     }
-    body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--dark); }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--dark); }
+    h1, h2, h3, h4, .section-title, .stat-number, .nav-logo { font-family: 'League Spartan', sans-serif; }
 
     nav {
       background: white; padding: 16px 40px;
@@ -22,8 +23,9 @@
     .nav-logo { text-decoration: none; display: flex; align-items: center; }
     .nav-links { display: flex; gap: 12px; align-items: center; }
     .nav-links a {
-      text-decoration: none; color: var(--dark); font-weight: 700;
+      text-decoration: none; color: var(--dark); font-weight: 600;
       padding: 8px 16px; border-radius: 50px; transition: all 0.2s;
+      font-family: 'Poppins', sans-serif;
     }
     .nav-links a:hover { background: var(--bg); }
     .btn-nav { background: var(--red) !important; color: white !important; padding: 10px 24px !important; }
@@ -40,17 +42,19 @@
 
     .btn-primary {
       background: var(--red); color: white; padding: 16px 36px;
-      border-radius: 50px; font-size: 18px; font-weight: 800;
+      border-radius: 50px; font-size: 16px; font-weight: 700;
       text-decoration: none; display: inline-block;
       transition: transform 0.2s, box-shadow 0.2s;
       box-shadow: 0 4px 15px rgba(252,53,38,0.3);
+      font-family: 'Poppins', sans-serif;
     }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(252,53,38,0.4); }
     .btn-secondary {
       background: transparent; color: var(--dark); padding: 16px 36px;
-      border-radius: 50px; font-size: 18px; font-weight: 800;
+      border-radius: 50px; font-size: 16px; font-weight: 700;
       text-decoration: none; display: inline-block;
       border: 3px solid var(--dark); margin-left: 16px; transition: all 0.2s;
+      font-family: 'Poppins', sans-serif;
     }
     .btn-secondary:hover { background: var(--dark); color: white; }
 
@@ -67,11 +71,11 @@
     }
     .stat { text-align: center; }
     .stat-number { font-size: 40px; font-weight: 900; color: var(--lime); }
-    .stat-label { font-size: 14px; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .stat-label { font-size: 13px; color: #aaa; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; font-family: 'Poppins', sans-serif; }
 
     .features { padding: 80px 40px; max-width: 1100px; margin: 0 auto; text-align: center; }
     .section-title { font-size: 38px; font-weight: 900; margin-bottom: 12px; }
-    .section-sub { font-size: 18px; color: #666; margin-bottom: 50px; }
+    .section-sub { font-size: 17px; color: #666; margin-bottom: 50px; font-family: 'Poppins', sans-serif; }
     .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
     .feature-card {
       background: white; border-radius: 20px; padding: 36px 28px; text-align: left;
@@ -80,7 +84,7 @@
     .feature-card:hover { transform: translateY(-4px); }
     .feature-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; }
     .feature-card h3 { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
-    .feature-card p { color: #666; line-height: 1.6; }
+    .feature-card p { color: #666; line-height: 1.6; font-size: 15px; }
 
     .how { background: white; padding: 80px 40px; text-align: center; }
     .steps { display: flex; justify-content: center; gap: 40px; max-width: 900px; margin: 50px auto 0; }
@@ -88,18 +92,19 @@
     .step-number {
       width: 60px; height: 60px; border-radius: 50%; font-size: 24px; font-weight: 900;
       color: white; display: flex; align-items: center; justify-content: center;
+      font-family: 'League Spartan', sans-serif;
     }
     .step h3 { font-size: 18px; font-weight: 800; }
-    .step p { color: #666; font-size: 15px; line-height: 1.6; }
+    .step p { color: #666; font-size: 14px; line-height: 1.6; }
 
     .cta { background: linear-gradient(135deg, var(--teal), var(--cyan)); padding: 80px 40px; text-align: center; color: white; }
     .cta h2 { font-size: 40px; font-weight: 900; margin-bottom: 16px; }
-    .cta p { font-size: 18px; opacity: 0.9; margin-bottom: 36px; }
+    .cta p { font-size: 17px; opacity: 0.9; margin-bottom: 36px; }
     .btn-white {
       background: white; color: var(--teal); padding: 16px 40px;
-      border-radius: 50px; font-size: 18px; font-weight: 800;
+      border-radius: 50px; font-size: 16px; font-weight: 700;
       text-decoration: none; display: inline-block; transition: transform 0.2s;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15); font-family: 'Poppins', sans-serif;
     }
     .btn-white:hover { transform: translateY(-2px); }
 
@@ -122,7 +127,7 @@
 
   <nav>
     <a href="/" class="nav-logo">
-      <img src="/Submark_1.png" alt="Behavior Explained" style="height:200px; width:auto;">
+      <img src="/Submark_1.png" alt="Behavior Explained" style="height:80px; width:auto;">
     </a>
     <div class="nav-links" id="navLinks">
       <a href="/courses">Browse CEUs</a>
@@ -151,15 +156,15 @@
   </section>
 
   <div class="stats">
-    <div class="stat"><div class="stat-number">10+</div><div class="stat-label">CEU Courses</div></div>
-    <div class="stat"><div class="stat-number">100%</div><div class="stat-label">Online & On-Demand</div></div>
+    <div class="stat"><div class="stat-number">8</div><div class="stat-label">CEU Modules</div></div>
+    <div class="stat"><div class="stat-number">32</div><div class="stat-label">Total CEUs</div></div>
     <div class="stat"><div class="stat-number">Auto</div><div class="stat-label">Certificate Delivery</div></div>
-    <div class="stat"><div class="stat-number">24/7</div><div class="stat-label">Access</div></div>
+    <div class="stat"><div class="stat-number">100%</div><div class="stat-label">Online & On-Demand</div></div>
   </div>
 
   <section class="features">
     <h2 class="section-title">Everything you need to earn your CEUs</h2>
-    <p class="section-sub">Built specifically for Behavior Analysts</p>
+    <p class="section-sub">Built specifically for BCBAs transitioning into Clinical Behavior Analysis</p>
     <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon" style="background:#FCF1F2;">🎬</div>
@@ -223,7 +228,7 @@
 
   <section class="cta">
     <h2>Ready to earn your CEUs?</h2>
-    <p>Join Behavior Analysts who are advancing their practice with Behavior Explained.</p>
+    <p>Join BCBAs who are advancing their CBA practice with Behavior Explained.</p>
     <a href="/signup" class="btn-white">Create Free Account</a>
   </section>
 
@@ -246,6 +251,5 @@
       fetch('/api/logout', { method: 'POST' }).then(() => location.reload());
     }
   </script>
-
 </body>
 </html>
