@@ -72,15 +72,16 @@
     .btn-nav:hover { opacity: 0.9; background: var(--red) !important; }
 
     /* HERO */
-    .hero {
-      padding: 80px 40px;
-      max-width: 1100px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
-    }
+.hero {
+  padding: 80px 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  min-height: 500px;
+}
 
     .hero h1 {
       font-size: 52px;
@@ -137,11 +138,12 @@
       color: white;
     }
 
-    .hero-image {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+.hero-image {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  min-width: 300px;
+}
 
     .hero-badge {
       width: 380px;
