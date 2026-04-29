@@ -329,4 +329,4 @@ app.post('/api/admin/approve-bundle/:id', requireAdmin, (req, res) => {
 
 // START
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Behavior Explained running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Behavior Explained CEU Platform running on port ${PORT}`));
