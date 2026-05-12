@@ -34,29 +34,36 @@
       display: flex; justify-content: space-between; align-items: center;
     }
     .welcome h1 { font-size: 32px; font-weight: 900; margin-bottom: 8px; }
-    .welcome p { color: #aaa; font-size: 15px; font-family: 'Poppins', sans-serif; }
+    .welcome p { color: #aaa; font-size: 15px; }
     .welcome-stats { display: flex; gap: 32px; }
     .welcome-stat { text-align: center; }
     .welcome-stat-num { font-size: 36px; font-weight: 900; color: var(--lime); font-family: 'League Spartan', sans-serif; }
-    .welcome-stat-label { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; font-family: 'Poppins', sans-serif; }
+    .welcome-stat-label { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
 
     .section-title { font-size: 24px; font-weight: 900; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
 
     .courses-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 50px; }
 
     .course-card {
-      background: white; border-radius: 20px; padding: 28px;
+      background: white; border-radius: 20px; overflow: hidden;
       box-shadow: 0 4px 20px rgba(0,0,0,0.07);
     }
-    .course-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+    .course-thumb {
+      height: 140px; position: relative; overflow: hidden;
+      background: #f0f0f0; display: flex; align-items: center; justify-content: center;
+    }
+    .course-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .course-thumb .emoji-thumb { font-size: 40px; }
+    .course-body { padding: 24px; }
+    .course-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
     .course-card-title { font-size: 18px; font-weight: 800; flex: 1; padding-right: 12px; font-family: 'League Spartan', sans-serif; }
-    .badge { padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; white-space: nowrap; font-family: 'Poppins', sans-serif; }
+    .badge { padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; white-space: nowrap; }
     .badge-complete { background: #e8fdf7; color: var(--teal); }
     .badge-inprogress { background: #fffbe6; color: #b8860b; }
     .course-card-meta { color: #888; font-size: 13px; margin-bottom: 20px; }
-    .course-actions { display: flex; gap: 10px; }
+    .course-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .btn-action {
-      padding: 10px 20px; border-radius: 50px; font-size: 13px;
+      padding: 10px 18px; border-radius: 50px; font-size: 13px;
       font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif;
       border: none; transition: all 0.2s; text-decoration: none;
       display: inline-block; text-align: center;
@@ -64,6 +71,7 @@
     .btn-watch { background: var(--cyan); color: white; }
     .btn-quiz { background: var(--red); color: white; }
     .btn-cert { background: var(--lime); color: var(--dark); }
+    .btn-email-cert { background: var(--teal); color: white; }
     .btn-action:hover { opacity: 0.85; transform: translateY(-1px); }
 
     .empty-state {
@@ -75,7 +83,6 @@
       display: inline-block; margin-top: 20px;
       background: var(--red); color: white; padding: 12px 28px;
       border-radius: 50px; font-weight: 600; text-decoration: none;
-      font-family: 'Poppins', sans-serif;
     }
 
     .modal-overlay {
@@ -113,11 +120,27 @@
     .result-score { font-size: 64px; font-weight: 900; font-family: 'League Spartan', sans-serif; }
     .result-msg { font-size: 20px; font-weight: 700; margin: 12px 0; font-family: 'League Spartan', sans-serif; }
     .result-sub { color: #666; margin-bottom: 24px; font-size: 15px; }
+    .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
     .btn-close-result {
-      padding: 14px 36px; border-radius: 50px; font-size: 15px;
+      padding: 14px 28px; border-radius: 50px; font-size: 15px;
       font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif;
       border: none; background: var(--teal); color: white;
     }
+    .btn-download-cert {
+      padding: 14px 28px; border-radius: 50px; font-size: 15px;
+      font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif;
+      border: none; background: var(--lime); color: var(--dark);
+      text-decoration: none; display: inline-block;
+    }
+
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--dark); color: white; padding: 14px 24px;
+      border-radius: 12px; font-size: 14px; font-weight: 600;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2); z-index: 9999;
+      transform: translateY(100px); opacity: 0; transition: all 0.3s;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
 
     @media (max-width: 768px) {
       .courses-grid { grid-template-columns: 1fr; }
@@ -131,7 +154,7 @@
 
   <nav>
     <a href="/" class="nav-logo">
-      <img src="/Submark_1.png" alt="Behavior Explained" style="height:200px; width:auto;">
+      <img src="/Submark_1.png" alt="Behavior Explained" style="height:80px; width:auto;">
     </a>
     <div class="nav-links" id="navLinks">
       <a href="/courses">Browse CEUs</a>
@@ -167,6 +190,7 @@
     </div>
   </div>
 
+  <!-- Quiz Modal -->
   <div class="modal-overlay" id="quizModal">
     <div class="modal">
       <button class="close-modal" onclick="closeQuiz()">✕</button>
@@ -176,15 +200,37 @@
         <div class="result-score" id="resultScore"></div>
         <div class="result-msg" id="resultMsg"></div>
         <div class="result-sub" id="resultSub"></div>
-        <button class="btn-close-result" onclick="closeQuiz()">Close</button>
+        <div class="result-actions">
+          <button class="btn-close-result" onclick="closeQuiz()">Close</button>
+          <a id="certDownloadBtn" class="btn-download-cert" style="display:none;" target="_blank">⬇ Download Certificate</a>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
   <script>
     let currentQuizCourseId = null;
+    const colors = ['#FCF1F2', '#e8fdf7', '#f0fcfe', '#fdf5ff', '#fffbe6', '#fff0f0'];
+    const emojis = ['🧠', '💬', '❤️', '🌱', '⚡', '🎯', '🔍', '💡', '🤝', '✨'];
 
-async function init() {
+    function getYouTubeId(url) {
+      if (!url) return null;
+      const patterns = [/youtube\.com\/watch\?v=([^&]+)/, /youtu\.be\/([^?]+)/, /youtube\.com\/embed\/([^?]+)/];
+      for (const p of patterns) { const m = url.match(p); if (m) return m[1]; }
+      return null;
+    }
+
+    function showToast(msg, duration = 3000) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), duration);
+    }
+
+    async function init() {
       const me = await fetch('/api/me').then(r => r.json());
       if (!me.loggedIn) { window.location.href = '/login'; return; }
 
@@ -201,7 +247,6 @@ async function init() {
         me.license_type ? `${me.license_type} — keep up the great work!` : 'Keep up the great work on your continuing education.';
 
       const courses = await fetch('/api/my-courses').then(r => r.json());
-
       document.getElementById('statEnrolled').textContent = courses.length;
       document.getElementById('statCompleted').textContent = courses.filter(c => c.completed).length;
       document.getElementById('statCredits').textContent =
@@ -221,22 +266,47 @@ async function init() {
           </div>`;
         return;
       }
-      grid.innerHTML = courses.map(c => `
-        <div class="course-card">
-          <div class="course-card-header">
-            <div class="course-card-title">${c.title}</div>
-            <span class="badge ${c.completed ? 'badge-complete' : 'badge-inprogress'}">
-              ${c.completed ? '✓ Complete' : 'In Progress'}
-            </span>
+
+      grid.innerHTML = courses.map((c, i) => {
+        const ytId = getYouTubeId(c.video_url);
+        const thumbHtml = ytId
+          ? `<div class="course-thumb"><img src="https://img.youtube.com/vi/${ytId}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${ytId}/hqdefault.jpg'" alt="${c.title}"></div>`
+          : `<div class="course-thumb" style="background:${colors[i % colors.length]}"><span class="emoji-thumb">${emojis[i % emojis.length]}</span></div>`;
+
+        return `
+          <div class="course-card">
+            ${thumbHtml}
+            <div class="course-body">
+              <div class="course-card-header">
+                <div class="course-card-title">${c.title}</div>
+                <span class="badge ${c.completed ? 'badge-complete' : 'badge-inprogress'}">
+                  ${c.completed ? '✓ Complete' : 'In Progress'}
+                </span>
+              </div>
+              <div class="course-card-meta">${c.ceu_credits} CEU Credits · ${c.category || 'General'}</div>
+              <div class="course-actions">
+                ${c.video_url ? `<a href="${c.video_url}" target="_blank" class="btn-action btn-watch">▶ Watch</a>` : ''}
+                ${!c.quiz_passed ? `<button class="btn-action btn-quiz" onclick="openQuiz(${c.course_id}, '${c.title.replace(/'/g, "\\'")}')">Take Quiz</button>` : ''}
+                ${c.completed ? `
+                  <a href="/api/certificate/${c.course_id}" target="_blank" class="btn-action btn-cert">⬇ Certificate</a>
+                  <button class="btn-action btn-email-cert" onclick="emailCert(${c.course_id})">📧 Email Me</button>
+                ` : ''}
+              </div>
+            </div>
           </div>
-          <div class="course-card-meta">${c.ceu_credits} CEU Credits · ${c.category || 'General'}</div>
-          <div class="course-actions">
-            ${c.video_url ? `<a href="${c.video_url}" target="_blank" class="btn-action btn-watch">▶ Watch</a>` : ''}
-            ${!c.quiz_passed ? `<button class="btn-action btn-quiz" onclick="openQuiz(${c.course_id}, '${c.title.replace(/'/g, "\\'")}')">Take Quiz</button>` : ''}
-            ${c.completed ? `<button class="btn-action btn-cert" onclick="getCertificate(${c.course_id})">🏆 Certificate</button>` : ''}
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+    }
+
+    async function emailCert(courseId) {
+      showToast('Sending certificate to your email...');
+      const res = await fetch(`/api/certificate/${courseId}/email`, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        showToast('✅ Certificate sent to your email!', 4000);
+      } else {
+        showToast('❌ Failed to send. Please try again.', 4000);
+      }
     }
 
     async function openQuiz(courseId, title) {
@@ -244,6 +314,7 @@ async function init() {
       document.getElementById('quizTitle').textContent = `Quiz: ${title}`;
       document.getElementById('quizResult').style.display = 'none';
       document.getElementById('quizContent').style.display = 'block';
+      document.getElementById('certDownloadBtn').style.display = 'none';
 
       const questions = await fetch(`/api/quiz/${courseId}`).then(r => r.json());
 
@@ -291,14 +362,13 @@ async function init() {
       if (data.passed) {
         document.getElementById('resultMsg').textContent = '🎉 You passed!';
         document.getElementById('resultSub').textContent = `You got ${data.correct} of ${data.total} correct. Your certificate will be emailed to you shortly!`;
+        const certBtn = document.getElementById('certDownloadBtn');
+        certBtn.href = `/api/certificate/${currentQuizCourseId}`;
+        certBtn.style.display = 'inline-block';
       } else {
         document.getElementById('resultMsg').textContent = '😔 Not quite — try again!';
         document.getElementById('resultSub').textContent = `You got ${data.correct} of ${data.total} correct. You need 80% to pass. Review the material and try again.`;
       }
-    }
-
-    async function getCertificate(courseId) {
-      alert('Certificate feature coming soon! For now, contact arogers@behaviorexplained.com to receive your certificate.');
     }
 
     function closeQuiz() {
