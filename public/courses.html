@@ -66,6 +66,13 @@
       padding: 4px 12px; border-radius: 50px;
       font-size: 12px; font-weight: 700; font-family: 'Poppins', sans-serif;
     }
+    .course-tag {
+      position: absolute; top: 12px; left: 12px;
+      padding: 4px 10px; border-radius: 50px;
+      font-size: 11px; font-weight: 700; font-family: 'Poppins', sans-serif;
+    }
+    .tag-ethics { background: #e8fdf7; color: var(--teal); }
+    .tag-supervision { background: #f0fcfe; color: var(--cyan); }
 
     .course-body { padding: 24px; flex: 1; display: flex; flex-direction: column; }
     .course-category {
@@ -123,6 +130,7 @@
       position: absolute; top: 16px; right: 20px;
       font-size: 24px; cursor: pointer; color: #aaa; background: none; border: none;
     }
+    .loading { text-align: center; color: #aaa; padding: 12px; font-size: 14px; }
 
     @media (max-width: 768px) {
       .courses-grid { grid-template-columns: 1fr; }
@@ -135,7 +143,7 @@
 
   <nav>
     <a href="/" class="nav-logo">
-      <img src="/Submark_1.png" alt="Behavior Explained" style="height:200px; width:auto;">
+      <img src="/Submark_1.png" alt="Behavior Explained" style="height:80px; width:auto;">
     </a>
     <div class="nav-links" id="navLinks">
       <a href="/courses">Browse CEUs</a>
@@ -162,11 +170,14 @@
     <div class="modal">
       <button class="close-modal" onclick="closeModal()">✕</button>
       <h2 id="modalTitle">Enroll in Course</h2>
-      <p id="modalDesc">You'll get instant access to this course after enrolling.</p>
+      <p id="modalDesc">Complete your purchase to get instant access to this course.</p>
       <div class="modal-actions">
-        <button class="btn-confirm" onclick="confirmEnroll()">Enroll Now — <span id="modalPrice"></span></button>
+        <button class="btn-confirm" id="checkoutBtn" onclick="checkout()">
+          Pay & Enroll — <span id="modalPrice"></span>
+        </button>
         <button class="btn-cancel" onclick="closeModal()">Cancel</button>
       </div>
+      <div class="loading" id="loadingMsg" style="display:none;">Redirecting to secure checkout...</div>
     </div>
   </div>
 
@@ -224,11 +235,14 @@
       }
       grid.innerHTML = courses.map((c, i) => {
         const enrolled = enrolledCourseIds.includes(c.id);
+        const ethicsTag = c.is_ethics ? '<span class="course-tag tag-ethics">Ethics ✓</span>' : '';
+        const supervisionTag = c.is_supervision ? '<span class="course-tag tag-supervision">Supervision ✓</span>' : '';
         return `
           <div class="course-card">
             <div class="course-thumb" style="background:${colors[i % colors.length]}">
               <span>${emojis[i % emojis.length]}</span>
               <span class="course-credits">${c.ceu_credits} CEU</span>
+              ${ethicsTag}${supervisionTag}
             </div>
             <div class="course-body">
               <div class="course-category">${c.category || 'General'}</div>
@@ -248,10 +262,15 @@
     }
 
     function openModal(id, title, price) {
-      if (!currentUser?.loggedIn) { window.location.href = '/signup'; return; }
+      if (!currentUser?.loggedIn) {
+        window.location.href = '/signup';
+        return;
+      }
       selectedCourseId = id;
       document.getElementById('modalTitle').textContent = title;
       document.getElementById('modalPrice').textContent = `$${parseFloat(price).toFixed(2)}`;
+      document.getElementById('loadingMsg').style.display = 'none';
+      document.getElementById('checkoutBtn').style.display = 'block';
       document.getElementById('modal').classList.add('open');
     }
 
@@ -260,10 +279,20 @@
       selectedCourseId = null;
     }
 
-    async function confirmEnroll() {
-      const res = await fetch(`/api/enroll/${selectedCourseId}`, { method: 'POST' });
+    async function checkout() {
+      document.getElementById('checkoutBtn').style.display = 'none';
+      document.getElementById('loadingMsg').style.display = 'block';
+
+      const res = await fetch(`/api/checkout/course/${selectedCourseId}`, { method: 'POST' });
       const data = await res.json();
-      if (data.success) { closeModal(); window.location.href = '/dashboard'; }
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'Something went wrong. Please try again.');
+        document.getElementById('checkoutBtn').style.display = 'block';
+        document.getElementById('loadingMsg').style.display = 'none';
+      }
     }
 
     function logout() {
