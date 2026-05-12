@@ -57,8 +57,24 @@
     .course-card:hover { transform: translateY(-4px); }
 
     .course-thumb {
-      height: 160px; display: flex; align-items: center; justify-content: center;
-      font-size: 48px; position: relative;
+      height: 180px; position: relative; overflow: hidden;
+      background: #f0f0f0; display: flex; align-items: center; justify-content: center;
+    }
+    .course-thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .course-thumb .emoji-thumb {
+      font-size: 48px;
+    }
+    .play-overlay {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.2s;
+    }
+    .course-card:hover .play-overlay { opacity: 1; }
+    .play-btn {
+      width: 56px; height: 56px; background: white; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
     .course-credits {
       position: absolute; top: 12px; right: 12px;
@@ -188,6 +204,44 @@
     const colors = ['#FCF1F2', '#e8fdf7', '#f0fcfe', '#fdf5ff', '#fffbe6', '#fff0f0'];
     const emojis = ['🧠', '💬', '❤️', '🌱', '⚡', '🎯', '🔍', '💡', '🤝', '✨'];
 
+    function getYouTubeId(url) {
+      if (!url) return null;
+      const patterns = [
+        /youtube\.com\/watch\?v=([^&]+)/,
+        /youtu\.be\/([^?]+)/,
+        /youtube\.com\/embed\/([^?]+)/,
+      ];
+      for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match) return match[1];
+      }
+      return null;
+    }
+
+    function getThumbHtml(course, index) {
+      const ytId = getYouTubeId(course.video_url);
+      if (ytId) {
+        return `
+          <div class="course-thumb">
+            <img src="https://img.youtube.com/vi/${ytId}/maxresdefault.jpg"
+              onerror="this.src='https://img.youtube.com/vi/${ytId}/hqdefault.jpg'"
+              alt="${course.title}">
+            <div class="play-overlay"><div class="play-btn">▶</div></div>
+            <span class="course-credits">${course.ceu_credits} CEU</span>
+            ${course.is_ethics ? '<span class="course-tag tag-ethics">Ethics ✓</span>' : ''}
+          </div>
+        `;
+      }
+      return `
+        <div class="course-thumb" style="background:${colors[index % colors.length]}">
+          <span class="emoji-thumb">${emojis[index % emojis.length]}</span>
+          <span class="course-credits">${course.ceu_credits} CEU</span>
+          ${course.is_ethics ? '<span class="course-tag tag-ethics">Ethics ✓</span>' : ''}
+          ${course.is_supervision ? '<span class="course-tag tag-supervision">Supervision ✓</span>' : ''}
+        </div>
+      `;
+    }
+
     async function init() {
       const me = await fetch('/api/me').then(r => r.json());
       currentUser = me;
@@ -235,15 +289,9 @@
       }
       grid.innerHTML = courses.map((c, i) => {
         const enrolled = enrolledCourseIds.includes(c.id);
-        const ethicsTag = c.is_ethics ? '<span class="course-tag tag-ethics">Ethics ✓</span>' : '';
-        const supervisionTag = c.is_supervision ? '<span class="course-tag tag-supervision">Supervision ✓</span>' : '';
         return `
           <div class="course-card">
-            <div class="course-thumb" style="background:${colors[i % colors.length]}">
-              <span>${emojis[i % emojis.length]}</span>
-              <span class="course-credits">${c.ceu_credits} CEU</span>
-              ${ethicsTag}${supervisionTag}
-            </div>
+            ${getThumbHtml(c, i)}
             <div class="course-body">
               <div class="course-category">${c.category || 'General'}</div>
               <div class="course-title">${c.title}</div>
@@ -262,10 +310,7 @@
     }
 
     function openModal(id, title, price) {
-      if (!currentUser?.loggedIn) {
-        window.location.href = '/signup';
-        return;
-      }
+      if (!currentUser?.loggedIn) { window.location.href = '/signup'; return; }
       selectedCourseId = id;
       document.getElementById('modalTitle').textContent = title;
       document.getElementById('modalPrice').textContent = `$${parseFloat(price).toFixed(2)}`;
@@ -282,10 +327,8 @@
     async function checkout() {
       document.getElementById('checkoutBtn').style.display = 'none';
       document.getElementById('loadingMsg').style.display = 'block';
-
       const res = await fetch(`/api/checkout/course/${selectedCourseId}`, { method: 'POST' });
       const data = await res.json();
-
       if (data.url) {
         window.location.href = data.url;
       } else {
