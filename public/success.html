@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Successful | Behavior Explained</title>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --red: #FC3526; --pink: #FAA1E4; --lime: #CEDD2E;
+      --teal: #1ACBA3; --cyan: #1BBFD6; --bg: #FCF1F2; --dark: #1a1a1a;
+    }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; }
+    h1, h2, h3 { font-family: 'League Spartan', sans-serif; }
+    nav {
+      background: white; padding: 16px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .nav-logo { text-decoration: none; display: flex; align-items: center; }
+    .main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+    .card {
+      background: white; border-radius: 24px; padding: 60px 48px;
+      width: 100%; max-width: 520px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.1); text-align: center;
+    }
+    .success-icon { font-size: 72px; margin-bottom: 24px; }
+    .card h1 { font-size: 36px; font-weight: 900; margin-bottom: 12px; color: var(--teal); }
+    .card p { color: #666; margin-bottom: 32px; font-size: 16px; line-height: 1.6; }
+    .btn {
+      display: inline-block; padding: 16px 36px; background: var(--red); color: white;
+      border-radius: 50px; font-size: 16px; font-weight: 700;
+      text-decoration: none; font-family: 'Poppins', sans-serif;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-logo">
+      <img src="/Submark_1.png" alt="Behavior Explained" style="height:80px; width:auto;">
+    </a>
+  </nav>
+  <div class="main">
+    <div class="card">
+      <div class="success-icon">🎉</div>
+      <h1>Payment Successful!</h1>
+      <p id="successMsg">You now have access to your course. Head to your dashboard to start learning and earning your CEUs!</p>
+      <a href="/dashboard" class="btn">Go to My Dashboard</a>
+    </div>
+  </div>
+  <script>
+    async function processPayment() {
+      const params = new URLSearchParams(window.location.search);
+      const type = params.get('type');
+      const id = params.get('id');
+      if (type && id) {
+        await fetch(`/api/enroll-after-payment?type=${type}&id=${id}`);
+        if (type === 'bundle') {
+          document.getElementById('successMsg').textContent = 'Your bundle purchase is being processed. You\'ll receive access once approved. Head to your dashboard to check your status!';
+        }
+      }
+    }
+    processPayment();
+  </script>
+</body>
+</html>
