@@ -4,6 +4,7 @@ const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const { Pool } = require('pg');
 const path = require('path');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 const pool = new Pool({
@@ -51,9 +52,7 @@ async function setupDatabase() {
 
       CREATE TABLE IF NOT EXISTS bundle_courses (
         bundle_id INTEGER,
-        course_id INTEGER,
-        FOREIGN KEY(bundle_id) REFERENCES bundles(id),
-        FOREIGN KEY(course_id) REFERENCES courses(id)
+        course_id INTEGER
       );
 
       CREATE TABLE IF NOT EXISTS enrollments (
@@ -66,9 +65,7 @@ async function setupDatabase() {
         quiz_attempts INTEGER DEFAULT 0,
         certificate_sent INTEGER DEFAULT 0,
         enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        completed_at TIMESTAMP,
-        FOREIGN KEY(user_id) REFERENCES users(id),
-        FOREIGN KEY(course_id) REFERENCES courses(id)
+        completed_at TIMESTAMP
       );
 
       CREATE TABLE IF NOT EXISTS bundle_enrollments (
@@ -77,9 +74,7 @@ async function setupDatabase() {
         bundle_id INTEGER,
         paid INTEGER DEFAULT 0,
         approved INTEGER DEFAULT 0,
-        enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY(user_id) REFERENCES users(id),
-        FOREIGN KEY(bundle_id) REFERENCES bundles(id)
+        enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
       CREATE TABLE IF NOT EXISTS quiz_questions (
@@ -90,8 +85,7 @@ async function setupDatabase() {
         option_b TEXT,
         option_c TEXT,
         option_d TEXT,
-        correct_answer TEXT,
-        FOREIGN KEY(course_id) REFERENCES courses(id)
+        correct_answer TEXT
       );
     `);
     console.log('Database tables ready');
@@ -113,10 +107,8 @@ app.use(session({
   cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
 }));
 
-// Admin email
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'arogers@behaviorexplained.com';
 
-// Auth middleware
 const requireAuth = (req, res, next) => {
   if (!req.session.userId) return res.redirect('/login');
   next();
@@ -136,6 +128,7 @@ app.get('/signup', (req, res) => res.sendFile(path.join(__dirname, 'public', 'si
 app.get('/courses', (req, res) => res.sendFile(path.join(__dirname, 'public', 'courses.html')));
 app.get('/dashboard', requireAuth, (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
 app.get('/admin', requireAdmin, (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
+app.get('/success', requireAuth, (req, res) => res.sendFile(path.join(__dirname, 'public', 'success.html')));
 
 // AUTH ROUTES
 app.post('/api/signup', async (req, res) => {
@@ -253,6 +246,174 @@ app.delete('/api/bundles/:id', requireAdmin, async (req, res) => {
   res.json({ success: true });
 });
 
+// STRIPE PAYMENT ROUTES
+app.post('/api/checkout/course/:courseId', requireAuth, async (req, res) => {
+  try {
+    const course = await pool.query('SELECT * FROM courses WHERE id = $1', [req.params.courseId]);
+    if (!course.rows[0]) return res.json({ error: 'Course not found' });
+
+    const existing = await pool.query(
+      'SELECT * FROM enrollments WHERE user_id = $1 AND course_id = $2 AND paid = 1',
+      [req.session.userId, req.params.courseId]
+    );
+    if (existing.rows[0]) return res.json({ error: 'Already enrolled' });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: course.rows[0].title,
+            description: `${course.rows[0].ceu_credits} CEU Credits — Online Asynchronous`,
+          },
+          unit_amount: Math.round(course.rows[0].price * 100),
+        },
+        quantity: 1,
+      }],
+      mode: 'payment',
+      success_url: `${req.protocol}://${req.get('host')}/success?type=course&id=${req.params.courseId}`,
+      cancel_url: `${req.protocol}://${req.get('host')}/courses`,
+      metadata: {
+        user_id: req.session.userId.toString(),
+        course_id: req.params.courseId.toString(),
+        type: 'course'
+      }
+    });
+
+    res.json({ url: session.url });
+  } catch (err) {
+    console.error('Stripe error:', err);
+    res.json({ error: 'Payment failed to initialize' });
+  }
+});
+
+app.post('/api/checkout/bundle/:bundleId', requireAuth, async (req, res) => {
+  try {
+    const bundle = await pool.query('SELECT * FROM bundles WHERE id = $1', [req.params.bundleId]);
+    if (!bundle.rows[0]) return res.json({ error: 'Bundle not found' });
+
+    const existing = await pool.query(
+      'SELECT * FROM bundle_enrollments WHERE user_id = $1 AND bundle_id = $2 AND paid = 1',
+      [req.session.userId, req.params.bundleId]
+    );
+    if (existing.rows[0]) return res.json({ error: 'Already enrolled in bundle' });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: bundle.rows[0].title,
+            description: bundle.rows[0].description || 'CEU Bundle Package',
+          },
+          unit_amount: Math.round(bundle.rows[0].price * 100),
+        },
+        quantity: 1,
+      }],
+      mode: 'payment',
+      success_url: `${req.protocol}://${req.get('host')}/success?type=bundle&id=${req.params.bundleId}`,
+      cancel_url: `${req.protocol}://${req.get('host')}/courses`,
+      metadata: {
+        user_id: req.session.userId.toString(),
+        bundle_id: req.params.bundleId.toString(),
+        type: 'bundle'
+      }
+    });
+
+    res.json({ url: session.url });
+  } catch (err) {
+    console.error('Stripe error:', err);
+    res.json({ error: 'Payment failed to initialize' });
+  }
+});
+
+// Stripe webhook
+app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    const { user_id, course_id, bundle_id, type } = session.metadata;
+
+    if (type === 'course') {
+      const existing = await pool.query(
+        'SELECT * FROM enrollments WHERE user_id = $1 AND course_id = $2',
+        [user_id, course_id]
+      );
+      if (existing.rows[0]) {
+        await pool.query(
+          'UPDATE enrollments SET paid = 1 WHERE user_id = $1 AND course_id = $2',
+          [user_id, course_id]
+        );
+      } else {
+        await pool.query(
+          'INSERT INTO enrollments (user_id, course_id, paid) VALUES ($1, $2, 1)',
+          [user_id, course_id]
+        );
+      }
+    } else if (type === 'bundle') {
+      const existing = await pool.query(
+        'SELECT * FROM bundle_enrollments WHERE user_id = $1 AND bundle_id = $2',
+        [user_id, bundle_id]
+      );
+      if (existing.rows[0]) {
+        await pool.query(
+          'UPDATE bundle_enrollments SET paid = 1 WHERE user_id = $1 AND bundle_id = $2',
+          [user_id, bundle_id]
+        );
+      } else {
+        await pool.query(
+          'INSERT INTO bundle_enrollments (user_id, bundle_id, paid, approved) VALUES ($1, $2, 1, 0)',
+          [user_id, bundle_id]
+        );
+      }
+    }
+  }
+  res.json({ received: true });
+});
+
+// Success route — grant access after payment
+app.get('/api/enroll-after-payment', requireAuth, async (req, res) => {
+  const { type, id } = req.query;
+  if (type === 'course') {
+    const existing = await pool.query(
+      'SELECT * FROM enrollments WHERE user_id = $1 AND course_id = $2',
+      [req.session.userId, id]
+    );
+    if (!existing.rows[0]) {
+      await pool.query(
+        'INSERT INTO enrollments (user_id, course_id, paid) VALUES ($1, $2, 1)',
+        [req.session.userId, id]
+      );
+    } else {
+      await pool.query(
+        'UPDATE enrollments SET paid = 1 WHERE user_id = $1 AND course_id = $2',
+        [req.session.userId, id]
+      );
+    }
+  } else if (type === 'bundle') {
+    const existing = await pool.query(
+      'SELECT * FROM bundle_enrollments WHERE user_id = $1 AND bundle_id = $2',
+      [req.session.userId, id]
+    );
+    if (!existing.rows[0]) {
+      await pool.query(
+        'INSERT INTO bundle_enrollments (user_id, bundle_id, paid, approved) VALUES ($1, $2, 1, 0)',
+        [req.session.userId, id]
+      );
+    }
+  }
+  res.json({ success: true });
+});
+
 // ENROLLMENT ROUTES
 app.get('/api/my-courses', requireAuth, async (req, res) => {
   const result = await pool.query(`
@@ -262,32 +423,6 @@ app.get('/api/my-courses', requireAuth, async (req, res) => {
     WHERE e.user_id = $1 AND e.paid = 1
   `, [req.session.userId]);
   res.json(result.rows);
-});
-
-app.post('/api/enroll/:courseId', requireAuth, async (req, res) => {
-  const existing = await pool.query(
-    'SELECT * FROM enrollments WHERE user_id = $1 AND course_id = $2',
-    [req.session.userId, req.params.courseId]
-  );
-  if (existing.rows[0]) return res.json({ error: 'Already enrolled' });
-  await pool.query(
-    'INSERT INTO enrollments (user_id, course_id, paid) VALUES ($1, $2, 1)',
-    [req.session.userId, req.params.courseId]
-  );
-  res.json({ success: true });
-});
-
-app.post('/api/enroll-bundle/:bundleId', requireAuth, async (req, res) => {
-  const existing = await pool.query(
-    'SELECT * FROM bundle_enrollments WHERE user_id = $1 AND bundle_id = $2',
-    [req.session.userId, req.params.bundleId]
-  );
-  if (existing.rows[0]) return res.json({ error: 'Already enrolled in bundle' });
-  await pool.query(
-    'INSERT INTO bundle_enrollments (user_id, bundle_id, paid, approved) VALUES ($1, $2, 1, 0)',
-    [req.session.userId, req.params.bundleId]
-  );
-  res.json({ success: true, message: 'Bundle enrollment pending approval' });
 });
 
 // QUIZ ROUTES
@@ -398,6 +533,4 @@ setupDatabase().then(() => {
   console.error('Database setup failed:', err);
   process.exit(1);
 });
-
-// v2
 
